@@ -1,14 +1,30 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=400,
+        content={
+            "error": "Invalid request",
+            "details": exc.errors()
+        }
+    )
+
+
 class TaskCreate(BaseModel):
-    title: str
+    title: str = Field(min_length=1)
+
 
 class TaskUpdate(BaseModel):
-    title: str
+    title: str = Field(min_length=1)
     done: bool
+
 
 tasks = [
     {
@@ -55,6 +71,7 @@ def get_task(task_id: int):
         detail=f"Task {task_id} not found"
     )
 
+
 @app.post("/tasks", status_code=201)
 def create_task(task: TaskCreate):
     new_task = {
@@ -66,6 +83,7 @@ def create_task(task: TaskCreate):
     tasks.append(new_task)
 
     return new_task
+
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: int, updated_task: TaskUpdate):
@@ -79,6 +97,7 @@ def update_task(task_id: int, updated_task: TaskUpdate):
         status_code=404,
         detail=f"Task {task_id} not found"
     )
+
 
 @app.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int):
