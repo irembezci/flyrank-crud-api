@@ -120,7 +120,7 @@ FastAPI automatically generates interactive API documentation, making it easy to
 
 ### API Documentation
 
-![Swagger UI](images/swagger-home.png)
+![Swagger UI](images/swagger-overview.png)
 
 ### Create a Task
 
@@ -138,7 +138,7 @@ FastAPI automatically generates interactive API documentation, making it easy to
 
 Submitting an invalid request, such as an empty task title, returns a validation error.
 
-![Validation](images/validation.png)
+![Validation](images/validation-error.png)
 
 
 ## Project Structure
